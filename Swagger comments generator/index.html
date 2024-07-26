@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swagger YAML Comment Generator</title>
+    
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+       
+        .btn-3d {
+            border-radius: 100px;
+            background: linear-gradient(145deg, #333, #000);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5), -4px -4px 8px rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-3d:hover {
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4), -2px -2px 6px rgba(255, 255, 255, 0.2);
+            background: linear-gradient(145deg, #444, #222);
+        }
+
+        
+        #generatedYaml {
+            background: #1e1e1e;
+            color: #dcdcdc;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+       
+        .neon-gradient {
+            background: linear-gradient(90deg, rgba(255,0,150,1) 0%, rgba(0,204,255,1) 100%);
+            color: #fff;
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,255,255,0.7);
+        }
+
+        
+        .comment-highlight {
+            border-left: 4px solid #ff00ff;
+            padding-left: 10px;
+            margin-bottom: 10px;
+            background-color: #282c34;
+            border-radius: 5px;
+            color: #e0e0e0;
+            font-family: monospace;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Swagger YAML Comment Generator</h1>
+                <div class="space-y-4">
+                    <div class="form-group">
+                        <input id="endpoint" class="form-control" placeholder="Endpoint (e.g., /api/users)">
+                    </div>
+                    <div class="form-group">
+                        <select id="method" class="form-control">
+                            <option value="get">GET</option>
+                            <option value="post">POST</option>
+                            <option value="put">PUT</option>
+                            <option value="delete">DELETE</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input id="tag" class="form-control" placeholder="Tag">
+                    </div>
+                    <div class="form-group">
+                        <input id="summary" class="form-control" placeholder="Summary">
+                    </div>
+                    <div class="form-group">
+                        <textarea id="description" class="form-control" placeholder="Description"></textarea>
+                    </div>
+
+                    <div>
+                        <h3 class="mb-2">Parameters</h3>
+                        <div id="parameters"></div>
+                        <button class="btn btn-secondary mt-2" onclick="addParameter()">Add Parameter</button>
+                    </div>
+
+                    <div class="mt-4">
+                        <h3 class="mb-2">Responses</h3>
+                        <div id="responses"></div>
+                        <button class="btn btn-secondary mt-2" onclick="addResponse()">Add Response</button>
+                    </div>
+
+                    <button class="btn btn-primary mt-4" onclick="generateYaml()">Generate YAML</button>
+
+                    <div class="mt-4">
+                        <textarea id="generatedYaml" class="form-control" rows="10" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        const parametersContainer = document.getElementById('parameters');
+        const responsesContainer = document.getElementById('responses');
+        const generatedYamlTextarea = document.getElementById('generatedYaml');
+
+        let parameters = [{ name: '', type: 'string', required: false, description: '' }];
+        let responses = [{ status: '200', description: '', contentType: 'application/json' }];
+
+        function addParameter() {
+            parameters.push({ name: '', type: 'string', required: false, description: '' });
+            renderParameters();
+        }
+
+        function addResponse() {
+            responses.push({ status: '', description: '', contentType: 'application/json' });
+            renderResponses();
+        }
+
+        function renderParameters() {
+            parametersContainer.innerHTML = parameters.map((param, index) => `
+                <div class="form-row mb-2">
+                    <div class="col">
+                        <input class="form-control" placeholder="Name" value="${param.name}" oninput="updateParameter(${index}, 'name', this.value)">
+                    </div>
+                    <div class="col">
+                        <select class="form-control" onchange="updateParameter(${index}, 'type', this.value)">
+                            <option value="string" ${param.type === 'string' ? 'selected' : ''}>String</option>
+                            <option value="number" ${param.type === 'number' ? 'selected' : ''}>Number</option>
+                            <option value="boolean" ${param.type === 'boolean' ? 'selected' : ''}>Boolean</option>
+                            <option value="object" ${param.type === 'object' ? 'selected' : ''}>Object</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <input class="form-control" placeholder="Description" value="${param.description}" oninput="updateParameter(${index}, 'description', this.value)">
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderResponses() {
+            responsesContainer.innerHTML = responses.map((resp, index) => `
+                <div class="form-row mb-2">
+                    <div class="col">
+                        <input class="form-control" placeholder="Status" value="${resp.status}" oninput="updateResponse(${index}, 'status', this.value)">
+                    </div>
+                    <div class="col">
+                        <input class="form-control" placeholder="Description" value="${resp.description}" oninput="updateResponse(${index}, 'description', this.value)">
+                    </div>
+                    <div class="col">
+                        <input class="form-control" placeholder="Content Type" value="${resp.contentType}" oninput="updateResponse(${index}, 'contentType', this.value)">
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateParameter(index, key, value) {
+            parameters[index][key] = value;
+        }
+
+        function updateResponse(index, key, value) {
+            responses[index][key] = value;
+        }
+
+        function generateYaml() {
+            const endpoint = document.getElementById('endpoint').value;
+            const method = document.getElementById('method').value;
+            const tag = document.getElementById('tag').value;
+            const summary = document.getElementById('summary').value;
+            const description = document.getElementById('description').value;
+
+            let yaml = `/**\n * @swagger\n * ${endpoint}:\n *   ${method}:\n *     tags:\n *       - ${tag}\n *     summary: ${summary}\n *     description: ${description}\n *     parameters:\n`;
+            yaml += parameters.map(param => ` *       - in: ${method === 'get' ? 'query' : 'body'}\n *         name: ${param.name}\n *         required: ${param.required}\n *         description: ${param.description}\n *         schema:\n *           type: ${param.type}`).join('\n') + '\n';
+            yaml += ` *     responses:\n`;
+            yaml += responses.map(resp => ` *       ${resp.status}:\n *         description: ${resp.description}\n *         content:\n *           ${resp.contentType}:\n *             schema:\n *               type: object`).join('\n') + '\n';
+            yaml += ` */`;
+
+            generatedYamlTextarea.value = yaml;
+        }
+
+        renderParameters();
+        renderResponses();
+    </script>
+</body>
+  </html>
