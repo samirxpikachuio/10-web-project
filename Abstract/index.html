@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pattern Generator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .wrapper {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      left: 50%;
+      top: 50%;
+      text-align: center;
+    }
+
+    .container {
+      background-color: #000;
+      height: calc(15vmin * 5);
+      width: calc(15vmin * 4);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 15px;
+      gap: 10px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(90, 90, 100, 0.4);
+      transform: rotateX(10deg) rotateY(10deg); /* 3D rotation */
+      transform-style: preserve-3d; /* Preserve 3D space */
+    }
+
+    .container div {
+      position: relative;
+      height: 100%;
+      width: 100%;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 30px;
+      background-color: #000;
+      padding: 18px 0;
+      color: #fff;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      font-size: 3.5vmin;
+      border-radius: 5px;
+    }
+
+    .quad-circle-1 {
+      clip-path: circle(100% at 0 0);
+    }
+
+    .quad-circle-2 {
+      clip-path: circle(100% at 100% 0);
+    }
+
+    .quad-circle-3 {
+      clip-path: circle(100% at 100% 100%);
+    }
+
+    .quad-circle-4 {
+      clip-path: circle(100% at 0 100%);
+    }
+
+    .triangle-1 {
+      clip-path: polygon(0 0, 0% 100%, 100% 0);
+    }
+
+    .triangle-2 {
+      clip-path: polygon(0 0, 100% 0%, 100% 100%);
+    }
+
+    .triangle-3 {
+      clip-path: polygon(0 100%, 100% 0%, 100% 100%);
+    }
+
+    .triangle-4 {
+      clip-path: polygon(0 0, 0% 100%, 100% 100%);
+    }
+
+    .circle {
+      border-radius: 50%;
+    }
+
+    #patternCanvas {
+      border: 1px solid #000;
+      background: #fff;
+      display: none; /* Initially hidden */
+      width: calc(15vmin * 4);
+      height: calc(15vmin * 5);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <button id="toggleMode">Switch to Canvas Mode</button>
+    <button id="generate">Generate Pattern</button>
+
+    <div class="container">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+
+    <canvas id="patternCanvas"></canvas>
+  </div>
+
+  <script>
+//CSS BASED PATTERN  IS MADE BY AsmrProg-YT
+    
+    const btn = document.getElementById("generate");
+    const toggleModeBtn = document.getElementById("toggleMode");
+    const shapes = [
+      "quad-circle-1",
+      "quad-circle-2",
+      "quad-circle-3",
+      "quad-circle-4",
+      "triangle-1",
+      "triangle-2",
+      "triangle-3",
+      "triangle-4",
+      "circle",
+    ];
+
+    const colors = ["#01d2fd", "#ffc700", "#fe9f12", "#06d0c7"];
+    const boxes = document.querySelectorAll(".container div");
+    const canvas = document.getElementById('patternCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let isCanvasMode = false;
+
+    function generateCSSPattern() {
+      boxes.forEach((box) => {
+        box.className = "";
+        let i = Math.floor(Math.random() * shapes.length);
+        let j = Math.floor(Math.random() * colors.length);
+        box.classList.add(shapes[i]);
+        box.style.backgroundColor = colors[j];
+      });
+    }
+
+    function generateCanvasPattern() {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+
+      const gradient = createGradient(ctx, canvas);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < 100; i++) {
+        drawRandomShape(ctx, canvas);
+      }
+    }
+
+    function createGradient(ctx, canvas) {
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, getRandomColor());
+      gradient.addColorStop(1, getRandomColor());
+      return gradient;
+    }
+
+    function getRandomColor() {
+      return `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
+    }
+
+    function drawRandomShape(ctx, canvas) {
+      const shapes = ['rectangle', 'circle', 'triangle'];
+      const shape = shapes[Math.floor(Math.random() * shapes.length)];
+
+      ctx.fillStyle = getRandomColor();
+      ctx.beginPath();
+
+      switch (shape) {
+        case 'rectangle':
+          const width = Math.random() * 100;
+          const height = Math.random() * 100;
+          ctx.rect(Math.random() * canvas.width, Math.random() * canvas.height, width, height);
+          break;
+        case 'circle':
+          const radius = Math.random() * 50;
+          ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, radius, 0, 2 * Math.PI);
+          break;
+        case 'triangle':
+          const x1 = Math.random() * canvas.width;
+          const y1 = Math.random() * canvas.height;
+          const x2 = Math.random() * canvas.width;
+          const y2 = Math.random() * canvas.height;
+          const x3 = Math.random() * canvas.width;
+          const y3 = Math.random() * canvas.height;
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.lineTo(x3, y3);
+          ctx.closePath();
+          break;
+      }
+
+      ctx.fill();
+    }
+
+    function toggleMode() {
+      isCanvasMode = !isCanvasMode;
+      if (isCanvasMode) {
+        document.querySelector('.container').style.display = 'none';
+        canvas.style.display = 'block';
+        toggleModeBtn.textContent = 'Switch to CSS Mode';
+        generateCanvasPattern();
+      } else {
+        document.querySelector('.container').style.display = 'grid';
+        canvas.style.display = 'none';
+        toggleModeBtn.textContent = 'Switch to Canvas Mode';
+        generateCSSPattern();
+      }
+    }
+
+    btn.addEventListener("click", () => {
+      if (isCanvasMode) {
+        generateCanvasPattern();
+      } else {
+        generateCSSPattern();
+      }
+    });
+
+    toggleModeBtn.addEventListener("click", toggleMode);
+
+    window.addEventListener("load", () => {
+      if (isCanvasMode) {
+        generateCanvasPattern();
+      } else {
+        generateCSSPattern();
+      }
+    });
+  </script>
+</body>
+             </html>
+  
