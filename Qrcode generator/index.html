@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QRCode Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      text-align: center;
+      background-color: #333;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    input, button {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+    }
+
+    input[type="text"] {
+      width: calc(100% - 22px);
+    }
+
+    .color-picker {
+      display: flex;
+      justify-content: space-around;
+      margin: 10px 0;
+    }
+
+    .color-picker input {
+      width: 45%;
+    }
+
+    .upload-btn, .generate-btn {
+      background-color: #000;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .upload-btn:hover, .generate-btn:hover {
+      background-color: #444;
+      transform: scale(1.05);
+    }
+
+    .card {
+      margin-top: 20px;
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+      display: inline-block;
+      padding: 20px;
+      background-color: #fff;
+    }
+
+    .card img {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    .card .logo-text {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      color: #000;
+      font-size: 20px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 5px;
+      border-radius: 5px;
+    }
+
+    .card .overlay-img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      overflow: hidden;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>QRCode Generator</h1>
+    <input type="text" id="textInput" placeholder="Enter text for QR code">
+    <div class="color-picker">
+      <input type="color" id="foregroundColor" value="#000000">
+      <input type="color" id="backgroundColor" value="#ffffff">
+    </div>
+    <input type="file" id="overlayImageInput" accept="image/*" style="display: none;">
+    <button class="upload-btn" onclick="document.getElementById('overlayImageInput').click();">Upload Overlay Image</button>
+    <input type="text" id="logoText" placeholder="Enter logo or text">
+    <button class="generate-btn" onclick="generateQRCode()">Generate QR Code</button>
+    <div id="card" class="card" style="display: none;">
+      <img id="qrCodeImage" src="" alt="QR Code">
+      <div class="logo-text" id="logoTextDisplay"></div>
+      <img id="overlayImage" class="overlay-img" src="" alt="Overlay Image" style="display: none;">
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+  <script>
+    let overlayImageFile = null;
+
+    function generateQRCode() {
+      const text = document.getElementById('textInput').value;
+      const fgColor = document.getElementById('foregroundColor').value;
+      const bgColor = document.getElementById('backgroundColor').value;
+      const logoText = document.getElementById('logoText').value;
+
+      if (text) {
+        // Create QR code and convert it to an image
+        QRCode.toDataURL(text, {
+          color: {
+            dark: fgColor,
+            light: bgColor
+          },
+          width: 300,
+          height: 300
+        }, function (err, url) {
+          if (err) {
+            console.error(err);
+            alert('Error generating QR code.');
+            return;
+          }
+          
+         
+          document.getElementById('qrCodeImage').src = url;
+
+         
+          document.getElementById('logoTextDisplay').textContent = logoText;
+
+          
+          if (overlayImageFile) {
+            const overlayImage = document.getElementById('overlayImage');
+            overlayImage.src = URL.createObjectURL(overlayImageFile);
+            overlayImage.style.display = 'block';
+          }
+
+         
+          document.getElementById('card').style.display = 'block';
+        });
+      } else {
+        alert('Please enter some text to generate a QR code.');
+      }
+    }
+
+    document.getElementById('overlayImageInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        overlayImageFile = file;
+      }
+    });
+  </script>
+</body>
+</html>
