@@ -6,4 +6,4 @@
 
 3: anime image generator [day 2]
 
-4: Pinterest search 
+4: Pinterest search [day 3]
