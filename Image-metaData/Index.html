@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Metadata Card Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+      margin: 0;
+      perspective: 1000px; /* Adds perspective to the scene */
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    #fileInput {
+      display: none; /* Hide the default file input */
+    }
+
+    .upload-btn {
+      display: inline-block;
+      padding: 20px 40px;
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.5em;
+      cursor: pointer;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition */
+    }
+
+    .upload-btn:hover {
+      transform: translateY(-4px); /* Slight lift effect on hover */
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+    }
+
+    .card {
+      display: none; /* Hide card initially */
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      text-align: left;
+      max-width: 400px;
+      width: 100%;
+      margin-top: 20px;
+      transform: rotateY(10deg) rotateX(10deg); /* 3D rotation */
+      transform-style: preserve-3d; /* Preserve 3D space */
+      transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effect */
+    }
+
+    .card:hover {
+      transform: rotateY(0deg) rotateX(0deg) scale(1.05); /* Slight zoom effect on hover */
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3); /* Enhance shadow on hover */
+    }
+
+    .card-image {
+      width: 100%;
+      height: auto;
+    }
+
+    .card-details {
+      padding: 20px;
+      transform: rotateX(0deg); /* Set initial transform style */
+      transform-style: preserve-3d; /* Preserve 3D space */
+      perspective: 800px; /* Perspective for inner elements */
+    }
+
+    .card-details p {
+      margin: 10px 0;
+      background: rgba(255, 255, 255, 0.9); /* Slight background for readability */
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effect */
+    }
+
+    .card-details p:hover {
+      transform: translateZ(10px); /* Lift effect on hover */
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhance shadow on hover */
+    }
+
+    .card-details strong {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Image Metadata Card Generator</h1>
+    <label for="fileInput" class="upload-btn">Upload Image</label>
+    <input type="file" id="fileInput" accept="image/*">
+    <div id="card" class="card">
+      <img id="image" src="" alt="Uploaded Image" class="card-image">
+      <div class="card-details">
+        <p><strong>File Name:</strong> <span id="fileName">N/A</span></p>
+        <p><strong>File Size:</strong> <span id="fileSize">N/A</span></p>
+        <p><strong>Image Dimensions:</strong> <span id="imageDimensions">N/A</span></p>
+        <p><strong>Image Type:</strong> <span id="imageType">N/A</span></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById('image');
+          img.src = e.target.result;
+          img.onload = function() {
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(2) + ' KB';
+            document.getElementById('imageDimensions').textContent = img.width + 'x' + img.height;
+            document.getElementById('imageType').textContent = file.type;
+          };
+        };
+        reader.readAsDataURL(file);
+        document.getElementById('card').style.display = 'block'; // Show the card when image is uploaded
+      } else {
+        alert('Please upload a valid image file.');
+      }
+    });
+  </script>
+</body>
+      </html>
+      
