@@ -10,3 +10,5 @@
 4: Pinterest search [day 3]
 
 5: weather forecast [day 3]
+
+6: abstract painting [day 3]
