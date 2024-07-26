@@ -12,3 +12,5 @@
 5: weather forecast [day 3]
 
 6: abstract painting [day 3]
+
+7: image metadata [day 4]
