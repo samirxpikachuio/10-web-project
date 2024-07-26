@@ -14,3 +14,5 @@
 6: abstract painting [day 3]
 
 7: image metadata [day 4]
+
+8: qrcode generator 
