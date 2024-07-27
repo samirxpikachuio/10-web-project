@@ -1,18 +1,20 @@
 
 # 100 Small web projects made by me during curfew 🐈 
 
-1: chatbot [ day 1 ]
+1: chatbot
 
-2: swagger yml comments generator [day 2]
+2: swagger yml comments generator
 
-3: anime image generator [day 2]
+3: anime image generator 
 
-4: Pinterest search [day 3]
+4: Pinterest search 
 
-5: weather forecast [day 3]
+5: weather forecast 
 
-6: abstract painting [day 3]
+6: abstract painting 
 
-7: image metadata [day 4]
+7: image metadata 
 
 8: qrcode generator 
+
+9: GitHub card
