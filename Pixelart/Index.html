@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Art Generator</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+
+        .container {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .slider-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .slider {
+            width: 45%;
+        }
+
+        .buttons {
+            margin-bottom: 20px;
+        }
+
+        .buttons button {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .buttons button:hover {
+            background-color: #555;
+        }
+
+        .color-picker {
+            width: 40px;
+            height: 40px;
+            border: none;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        #grid {
+            display: grid;
+            border: 1px solid #555;
+            margin-top: 20px;
+        }
+
+        .cell {
+            border: 1px solid #555;
+            width: 10px;
+            height: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pixel Art Generator</h1>
+        <div class="slider-container">
+            <div class="slider">
+                <label for="widthSlider">Grid Width</label>
+                <input type="range" id="widthSlider" min="5" max="50" value="25">
+                <span id="widthValue">25</span>
+            </div>
+            <div class="slider">
+                <label for="heightSlider">Grid Height</label>
+                <input type="range" id="heightSlider" min="5" max="50" value="25">
+                <span id="heightValue">25</span>
+            </div>
+        </div>
+        <div class="buttons">
+            <button id="createGrid">Create Grid</button>
+            <button id="clearGrid">Clear Grid</button>
+            <input type="color" id="colorPicker" class="color-picker">
+            <button id="erase">Erase</button>
+            <button id="paint">Paint</button>
+        </div>
+        <div id="grid"></div>
+    </div>
+
+    <script>
+        const widthSlider = document.getElementById('widthSlider');
+        const heightSlider = document.getElementById('heightSlider');
+        const widthValue = document.getElementById('widthValue');
+        const heightValue = document.getElementById('heightValue');
+        const createGridButton = document.getElementById('createGrid');
+        const clearGridButton = document.getElementById('clearGrid');
+        const colorPicker = document.getElementById('colorPicker');
+        const eraseButton = document.getElementById('erase');
+        const paintButton = document.getElementById('paint');
+        const gridContainer = document.getElementById('grid');
+
+        let isPainting = true;
+        let selectedColor = '#000000';
+
+        widthSlider.addEventListener('input', () => {
+            widthValue.textContent = widthSlider.value;
+        });
+
+        heightSlider.addEventListener('input', () => {
+            heightValue.textContent = heightSlider.value;
+        });
+
+        createGridButton.addEventListener('click', createGrid);
+        clearGridButton.addEventListener('click', clearGrid);
+        colorPicker.addEventListener('input', (e) => selectedColor = e.target.value);
+        eraseButton.addEventListener('click', () => isPainting = false);
+        paintButton.addEventListener('click', () => isPainting = true);
+
+        function createGrid() {
+            gridContainer.innerHTML = '';
+            const gridWidth = widthSlider.value;
+            const gridHeight = heightSlider.value;
+            gridContainer.style.gridTemplateColumns = `repeat(${gridWidth}, 10px)`;
+            gridContainer.style.gridTemplateRows = `repeat(${gridHeight}, 10px)`;
+            for (let i = 0; i < gridWidth * gridHeight; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.addEventListener('mousedown', paintCell);
+                cell.addEventListener('mouseover', (e) => {
+                    if (e.buttons === 1) paintCell(e);
+                });
+                gridContainer.appendChild(cell);
+            }
+        }
+
+        function clearGrid() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => cell.style.backgroundColor = 'white');
+        }
+
+        function paintCell(event) {
+            if (isPainting) {
+                event.target.style.backgroundColor = selectedColor;
+            } else {
+                event.target.style.backgroundColor = 'white';
+            }
+        }
+
+        // Create an initial grid
+        createGrid();
+    </script>
+</body>
+  </html>
+    
