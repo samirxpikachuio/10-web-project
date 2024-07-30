@@ -1,5 +1,5 @@
 
-# 100 Small web projects made by me during curfew 🐈 
+# 10 Small web projects made by me during curfew 🐈 
 
 1: chatbot
 
